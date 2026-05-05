@@ -3,24 +3,15 @@ import streamlit as st
 import numpy as np
 import pandas as pd
 
-# -----------------------------
-# Load trained model & scaler
-# -----------------------------
 model = pickle.load(open('rf_model.pkl', 'rb'))
 scaler = pickle.load(open('scaler.pkl', 'rb'))
 num_cols = pickle.load(open("num_cols.pkl","rb"))
 features_order = pickle.load(open("features.pkl","rb"))
 
-# -----------------------------
-# Title
-# -----------------------------
+
 st.title("HR Employee Attrition Prediction")
 
 st.write("Enter employee details to predict Attrition")
-
-# -----------------------------
-# Input Fields
-# -----------------------------
 
 Age = st.number_input("Age", 18, 60, 30)
 
@@ -104,9 +95,6 @@ OverTime = {
     "No":0
 }[OverTime]
 
-# -----------------------------
-# Prediction Button
-# -----------------------------
 
 if st.button("Predict Attrition"):
 
@@ -136,16 +124,15 @@ if st.button("Predict Attrition"):
         "YearsWithCurrManager":[YearsWithCurrManager]
     })
 
-    # Maintain same column order
+  
     input_df = input_df.reindex(columns=features_order, fill_value=0)
 
-    # Scale ONLY numeric columns
+ 
     input_df[num_cols] = scaler.transform(input_df[num_cols])
 
-    # Prediction
     prediction = model.predict(input_df)[0]
 
     if prediction == 1:
-        st.error("⚠️ Employee Likely to Leave")
+        st.error("Employee Likely to Leave")
     else:
-        st.success("✅ Employee Likely to Stay")
+        st.success("Employee Likely to Stay")
